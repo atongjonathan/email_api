@@ -4,8 +4,6 @@ import smtplib
 from email.mime.text import MIMEText
 from dotenv import load_dotenv
 import os
-
-
 load_dotenv("config.env")
 EMAIL = os.environ.get("EMAIL")
 PASSWORD = os.environ.get("PASSWORD")
@@ -26,10 +24,9 @@ async def test():
 async def send_email(email_request: EmailRequest):
     try:
         # Create the email message
-        sender_email = "portal@thearkjuniorschool.com"
         msg = MIMEText(email_request.body)
         msg["Subject"] = email_request.subject
-        msg["From"] = sender_email
+        msg["From"] = EMAIL
         msg["To"] = email_request.recipient_email
 
         # Send the email
@@ -39,7 +36,7 @@ async def send_email(email_request: EmailRequest):
             connection.ehlo()
             connection.starttls()
             connection.login(user=EMAIL, password=PASSWORD)
-            connection.sendmail(sender_email, email_request.recipient_email, msg.as_string())
+            connection.sendmail(EMAIL, email_request.recipient_email, msg.as_string())
 
         return {"message": "Email sent successfully!"}
 
