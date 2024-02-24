@@ -15,12 +15,16 @@ class EmailRequest:
         self.recipient_email = recipient_email
         self.subject = subject
         self.body = body
+@app.route("/")
+def main_():
+    return "Flask is running"
 
+    
 @app.route("/test/", methods=["GET"])
 def test():
     return jsonify({"message": "API is working just fine"})
 
-@app.route("/send_email/", methods=["GET"])
+@app.route("/send_email/", methods=["POST"])
 def send_email():
     try:
         data = request.get_json()
