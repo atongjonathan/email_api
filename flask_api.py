@@ -1,12 +1,9 @@
 from flask import Flask, request, jsonify
 import smtplib
 from email.mime.text import MIMEText
-from dotenv import load_dotenv
-import os
 
-load_dotenv("config.env")
-EMAIL = os.environ.get("EMAIL")
-PASSWORD = os.environ.get("PASSWORD")
+EMAIL = "portal@thearkjuniorschool.com"
+PASSWORD = "ioqm iivv yatz mbep\n"
 
 app = Flask(__name__)
 
@@ -24,7 +21,7 @@ def main_():
 def test():
     return jsonify({"message": "API is working just fine"})
 
-@app.route("/send_email/", methods=["POST"])
+@app.route("/send_email/", methods=["GET"])
 def send_email():
     try:
         data = request.get_json()
