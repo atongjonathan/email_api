@@ -1,17 +1,23 @@
 from flask import Flask, request, jsonify
-import smtplib
-from email.mime.text import MIMEText
+from django.core.mail import EmailMultiAlternatives
+from django.conf import settings
 
-EMAIL = "portal@thearkjuniorschool.com"
-PASSWORD = "ioqm iivv yatz mbep\n"
+settings.configure(
+    DEBUG=True,
+    # Email settings
+    EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend',
+    EMAIL_HOST='smtp.gmail.com',
+    EMAIL_PORT=587,
+    EMAIL_USE_TLS=True,
+    EMAIL_HOST_USER='portal@thearkjuniorschool.com',
+    EMAIL_HOST_PASSWORD='ioqm iivv yatz mbep\n',
+    DEFAULT_FROM_EMAIL='portal@thearkjuniorschool.com',
+    SERVER_EMAIL='portal@thearkjuniorschool.com',
+    # Add any other required settings here
+)
 
 app = Flask(__name__)
 
-class EmailRequest:
-    def __init__(self, recipient_email, subject, body):
-        self.recipient_email = recipient_email
-        self.subject = subject
-        self.body = body
 @app.route("/")
 def main_():
     return "Flask is running"
@@ -25,25 +31,23 @@ def test():
 def send_email():
     try:
         data = request.get_json()
-        email_request = EmailRequest(
-            recipient_email=data["recipient_email"],
+        message = EmailMultiAlternatives(
+        to=[data["recipient"]],
+            from_email="portal@thearkjuniorschool.com",
             subject=data["subject"],
-            body=data["body"]
         )
+        template = data['template']
+        with open(f"templates/{template}.html", "r", encoding="utf-8") as file:
+            template_string = file.read()
+        if template == "invite":
+            template_string = template_string.replace("{{ user }}", data["user"])
+        elif template == "forgot":
+            template_string = template_string.replace("{{ link }}", data["url"])
 
-        # Create the email message
-        msg = MIMEText(email_request.body)
-        msg["Subject"] = email_request.subject
-        msg["From"] = EMAIL
-        msg["To"] = email_request.recipient_email
 
-        # Send the email
-        with smtplib.SMTP('smtp.gmail.com', 587) as connection:
-            connection.ehlo()
-            connection.starttls()
-            connection.login(user=EMAIL, password=PASSWORD)
-            connection.sendmail(EMAIL, email_request.recipient_email, msg.as_string())
 
+        message.attach_alternative(template_string, "text/html")
+        message.send(fail_silently=False)
         return jsonify({"message": "Email sent successfully!"})
 
     except Exception as e:
