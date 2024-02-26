@@ -37,14 +37,14 @@ def send_email():
         subject=data["subject"],
     )
     template = data['template']
-    template_path = os.path.abspath(f"email_templates/{template}.html")
-    print("Path>>>>>", template_path)
+    template_path = f"/home/AtongJona2/email_api/email_templates/{template}.html"
     with open(template_path, "r", encoding="utf-8") as file:
         template_string = file.read()
     if template == "invite":
         template_string = template_string.replace("{{ user }}", data["user"])
     elif template == "forgot":
-        template_string = template_string.replace("{{ link }}", data["url"])
+        url = f"https://{data['url']}"
+        template_string = template_string.replace("{{ link }}", url)
 
 
 
