@@ -37,7 +37,7 @@ def send_email():
         subject=data["subject"],
     )
     template = data['template']
-    template_path = os.path.abspath(f"templates/{template}.html")
+    template_path = os.path.abspath(f"email_templates/{template}.html")
     print("Path>>>>>", template_path)
     with open(template_path, "r", encoding="utf-8") as file:
         template_string = file.read()
