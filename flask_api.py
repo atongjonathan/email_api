@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
+import os
 
 settings.configure(
     DEBUG=True,
@@ -36,7 +37,9 @@ def send_email():
         subject=data["subject"],
     )
     template = data['template']
-    with open(f"./templates/{template}.html", "r", encoding="utf-8") as file:
+    template_path = os.path.abspath(f"templates/{template}.html")
+    print("Path>>>>>", template_path)
+    with open(template_path, "r", encoding="utf-8") as file:
         template_string = file.read()
     if template == "invite":
         template_string = template_string.replace("{{ user }}", data["user"])
