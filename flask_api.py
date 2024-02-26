@@ -29,29 +29,25 @@ def test():
 
 @app.route("/send_email/", methods=["GET"])
 def send_email():
-    try:
-        data = request.get_json()
-        message = EmailMultiAlternatives(
-        to=[data["recipient"]],
-            from_email="portal@thearkjuniorschool.com",
-            subject=data["subject"],
-        )
-        template = data['template']
-        with open(f"templates/{template}.html", "r", encoding="utf-8") as file:
-            template_string = file.read()
-        if template == "invite":
-            template_string = template_string.replace("{{ user }}", data["user"])
-        elif template == "forgot":
-            template_string = template_string.replace("{{ link }}", data["url"])
+    data = request.get_json()
+    message = EmailMultiAlternatives(
+    to=[data["recipient"]],
+        from_email="portal@thearkjuniorschool.com",
+        subject=data["subject"],
+    )
+    template = data['template']
+    with open(f"./templates/{template}.html", "r", encoding="utf-8") as file:
+        template_string = file.read()
+    if template == "invite":
+        template_string = template_string.replace("{{ user }}", data["user"])
+    elif template == "forgot":
+        template_string = template_string.replace("{{ link }}", data["url"])
 
 
 
-        message.attach_alternative(template_string, "text/html")
-        message.send(fail_silently=False)
-        return jsonify({"message": "Email sent successfully!"})
-
-    except Exception as e:
-        return jsonify({"error": f"Failed to send email: {str(e)}"}), 500
+    message.attach_alternative(template_string, "text/html")
+    message.send(fail_silently=False)
+    return jsonify({"message": "Email sent successfully!"})
 
 if __name__ == "__main__":
     app.run(debug=True)
