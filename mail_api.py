@@ -53,7 +53,7 @@ def send_email():
         message.send(fail_silently=False)
         return jsonify({"message": "Success"})
     except Exception as e:
-        return jsonify({"message": "Fail"})
+        return jsonify({"message": e})
 
 if __name__ == "__main__":
     app.run(debug=True)
