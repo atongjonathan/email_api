@@ -49,8 +49,11 @@ def send_email():
 
 
     message.attach_alternative(template_string, "text/html")
-    message.send(fail_silently=False)
-    return jsonify({"message": "Email sent successfully!"})
+    try:
+        message.send(fail_silently=False)
+        return jsonify({"message": "Success"})
+    except Exception as e:
+        return jsonify({"message": "Fail"})
 
 if __name__ == "__main__":
     app.run(debug=True)
