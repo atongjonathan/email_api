@@ -21,12 +21,9 @@ app = Flask(__name__)
 
 @app.route("/")
 def main_():
-    return "Flask is running"
+    return "<h1>Email API is listening</h1>"
 
-    
-@app.route("/test/", methods=["GET"])
-def test():
-    return jsonify({"message": "API is working just fine"})
+
 
 @app.route("/send_email/", methods=["GET"])
 def send_email():
@@ -53,7 +50,7 @@ def send_email():
         message.send(fail_silently=False)
         return jsonify({"message": "Success"})
     except Exception as e:
-        return jsonify({"message": e})
+        return jsonify({"message": str(e)})
 
 if __name__ == "__main__":
     app.run(debug=True)
